@@ -1,16 +1,18 @@
 import jwt from 'jsonwebtoken';
 
 export const generateToken = (req, res, userId) => {
-  // Generating a JWT token for the authenticated user
-  const token = jwt.sign({ userId }, process.env.JWT_SECRET, {
-    expiresIn: req.body.remember ? 365 * 24 + 'h' : '24h'
+  // Generate JWT Token
+  const token = jwt.sign({ id: userId }, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_EXPIRE, // e.g., '7d'
   });
 
-  // Setting the JWT as an HTTP-only cookie for enhanced security
+  // Set token as cookie
   res.cookie('jwt', token, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV !== 'development',
-    sameSite: 'strict',
-    maxAge: req.body.remember ? 365 * 24 * 60 * 60 * 1000 : 24 * 60 * 60 * 1000
+    httpOnly: true, // Prevent client-side JavaScript access to the cookie
+    secure: process.env.NODE_ENV === 'production', // Set to true if you're in production (HTTPS)
+    sameSite: 'None', // Allows the cookie to be sent across different domains (cross-origin)
+    maxAge: 7 * 24 * 60 * 60 * 1000, // Cookie expiration (e.g., 7 days)
   });
+
+  return token;
 };
