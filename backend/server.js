@@ -20,9 +20,14 @@ const frontendURL = process.env.FRONTEND_URL || 'https://fullweb-ec1i.onrender.c
 connectDB();
 
 const app = express();
-
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', 'https://lively-bienenstitch-fdf491.netlify.app'); // Change this to your frontend URL
+  res.header('Access-Control-Allow-Credentials', 'true'); // Allow cookies
+  next();
+});
 app.use(cors({
   origin: frontendURL,
+  
   credentials: true,
 }));
 
